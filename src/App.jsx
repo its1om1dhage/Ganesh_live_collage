@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import Webcam from 'react-webcam'
 import html2canvas from 'html2canvas'
 import { saveAs } from 'file-saver'
@@ -7,8 +7,41 @@ import './App.css'
 const App = () => {
   const [photos, setPhotos] = useState([])
   const [showCamera, setShowCamera] = useState(false)
+  const [screenSize, setScreenSize] = useState('desktop')
   const webcamRef = useRef(null)
   const collageRef = useRef(null)
+  const mosaicRef = useRef(null)
+
+  // Detect screen size for responsive grid
+  useEffect(() => {
+    const updateScreenSize = () => {
+      const width = window.innerWidth
+      if (width < 480) {
+        setScreenSize('mobile')
+      } else if (width < 768) {
+        setScreenSize('tablet')
+      } else if (width < 1024) {
+        setScreenSize('laptop')
+      } else {
+        setScreenSize('desktop')
+      }
+    }
+
+    updateScreenSize()
+    window.addEventListener('resize', updateScreenSize)
+    return () => window.removeEventListener('resize', updateScreenSize)
+  }, [])
+
+  // Get grid size based on screen size and photo count
+  const getResponsiveGridSize = (photoCount, screenSize) => {
+    const baseSizes = {
+      mobile: Math.min(3, Math.max(2, Math.ceil(Math.sqrt(photoCount)))),
+      tablet: Math.min(4, Math.max(3, Math.ceil(Math.sqrt(photoCount)))),
+      laptop: Math.min(5, Math.max(4, Math.ceil(Math.sqrt(photoCount * 1.2)))),
+      desktop: Math.min(6, Math.max(4, Math.ceil(Math.sqrt(photoCount * 1.5))))
+    }
+    return baseSizes[screenSize] || 4
+  }
 
   // Capture photo from webcam with aspect ratio
   const capturePhoto = useCallback(() => {
@@ -69,9 +102,9 @@ const App = () => {
 
   // Download collage
   const downloadCollage = async () => {
-    if (collageRef.current && photos.length > 0) {
+    if (mosaicRef.current && photos.length > 0) {
       try {
-        const canvas = await html2canvas(collageRef.current, {
+        const canvas = await html2canvas(mosaicRef.current, {
           backgroundColor: '#fff',
           scale: 2,
           useCORS: true,
@@ -92,48 +125,156 @@ const App = () => {
     setPhotos([])
   }
 
-  // Get layout configuration based on photo count - single collage that gets more complex
-  const getLayoutConfig = (photoCount) => {
-    if (photoCount <= 1) return { rows: 1, cols: 1, type: 'single' }
-    if (photoCount <= 4) return { rows: 2, cols: 2, type: 'grid' }
-    if (photoCount <= 6) return { rows: 2, cols: 3, type: 'grid' }
-    if (photoCount <= 9) return { rows: 3, cols: 3, type: 'complex' }
-    if (photoCount <= 12) return { rows: 3, cols: 4, type: 'complex' }
-    if (photoCount <= 16) return { rows: 4, cols: 4, type: 'complex' }
-    if (photoCount <= 20) return { rows: 4, cols: 5, type: 'ultra' }
-    if (photoCount <= 25) return { rows: 5, cols: 5, type: 'ultra' }
-    if (photoCount <= 30) return { rows: 5, cols: 6, type: 'mega' }
-    if (photoCount <= 36) return { rows: 6, cols: 6, type: 'mega' }
-    if (photoCount <= 42) return { rows: 6, cols: 7, type: 'extreme' }
-    if (photoCount <= 49) return { rows: 7, cols: 7, type: 'extreme' }
-    if (photoCount <= 56) return { rows: 7, cols: 8, type: 'insane' }
-    if (photoCount <= 64) return { rows: 8, cols: 8, type: 'insane' }
-    if (photoCount <= 81) return { rows: 9, cols: 9, type: 'infinite' }
-    if (photoCount <= 100) return { rows: 10, cols: 10, type: 'infinite' }
+  // Dynamic Mosaic Layout Generator - Creates varied, artistic layouts
+  const generateMosaicLayout = (photoCount) => {
+    const layouts = []
+    const gridSize = getResponsiveGridSize(photoCount, screenSize)
     
-    // For 100+ photos, dynamically calculate grid size
-    const gridSize = Math.ceil(Math.sqrt(photoCount))
-    return { 
-      rows: gridSize, 
-      cols: gridSize, 
-      type: 'infinite'
+    // Simpler layouts for mobile
+    if (screenSize === 'mobile') {
+      if (photoCount === 1) {
+        return [{ size: 'large', row: 1, col: 1, rowSpan: 2, colSpan: 2 }]
+      }
+      if (photoCount === 2) {
+        return [
+          { size: 'medium', row: 1, col: 1, rowSpan: 1, colSpan: 2 },
+          { size: 'medium', row: 2, col: 1, rowSpan: 1, colSpan: 2 }
+        ]
+      }
+      if (photoCount === 3) {
+        return [
+          { size: 'medium', row: 1, col: 1, rowSpan: 1, colSpan: 2 },
+          { size: 'small', row: 2, col: 1, rowSpan: 1, colSpan: 1 },
+          { size: 'small', row: 2, col: 2, rowSpan: 1, colSpan: 1 }
+        ]
+      }
     }
+    
+    if (photoCount === 1) {
+      const span = screenSize === 'mobile' ? 2 : 4
+      return [{ size: 'large', row: 1, col: 1, rowSpan: span, colSpan: span }]
+    }
+    
+    if (photoCount === 2) {
+      const span = Math.floor(gridSize / 2)
+      return [
+        { size: 'large', row: 1, col: 1, rowSpan: gridSize, colSpan: span },
+        { size: 'large', row: 1, col: span + 1, rowSpan: gridSize, colSpan: span }
+      ]
+    }
+    
+    if (photoCount === 3) {
+      const largePan = Math.floor(gridSize * 0.6)
+      const mediumSpan = gridSize - largePan
+      return [
+        { size: 'large', row: 1, col: 1, rowSpan: largePan, colSpan: largePan },
+        { size: 'medium', row: 1, col: largePan + 1, rowSpan: Math.floor(mediumSpan/2) || 1, colSpan: mediumSpan },
+        { size: 'medium', row: Math.floor(mediumSpan/2) + 2, col: largePan + 1, rowSpan: Math.ceil(mediumSpan/2), colSpan: mediumSpan }
+      ]
+    }
+    
+    // For more complex layouts, use dynamic algorithm but adapt to screen size
+    const patterns = screenSize === 'mobile' ? [
+      { size: 'medium', rowSpan: 1, colSpan: 2 },
+      { size: 'small', rowSpan: 1, colSpan: 1 },
+      { size: 'wide', rowSpan: 1, colSpan: 3 }
+    ] : [
+      { size: 'large', rowSpan: 2, colSpan: 2 },
+      { size: 'wide', rowSpan: 1, colSpan: 3 },
+      { size: 'tall', rowSpan: 3, colSpan: 1 },
+      { size: 'medium', rowSpan: 1, colSpan: 2 },
+      { size: 'small', rowSpan: 1, colSpan: 1 }
+    ]
+    
+    // Create a dynamic grid layout for remaining photos
+    let currentRow = 1
+    let currentCol = 1
+    const occupiedCells = new Set()
+    
+    for (let i = 0; i < photoCount; i++) {
+      const pattern = patterns[i % patterns.length]
+      
+      // Find next available position
+      while (occupiedCells.has(`${currentRow}-${currentCol}`)) {
+        currentCol++
+        if (currentCol > gridSize) {
+          currentCol = 1
+          currentRow++
+        }
+      }
+      
+      // Check if pattern fits
+      let canFit = true
+      const endRow = currentRow + pattern.rowSpan - 1
+      const endCol = currentCol + pattern.colSpan - 1
+      
+      if (endRow > gridSize || endCol > gridSize) {
+        // Use small size if doesn't fit
+        layouts.push({
+          size: 'small',
+          row: currentRow,
+          col: currentCol,
+          rowSpan: 1,
+          colSpan: 1
+        })
+        occupiedCells.add(`${currentRow}-${currentCol}`)
+      } else {
+        // Check if all cells are free
+        for (let r = currentRow; r <= endRow; r++) {
+          for (let c = currentCol; c <= endCol; c++) {
+            if (occupiedCells.has(`${r}-${c}`)) {
+              canFit = false
+              break
+            }
+          }
+          if (!canFit) break
+        }
+        
+        if (canFit) {
+          layouts.push({
+            size: pattern.size,
+            row: currentRow,
+            col: currentCol,
+            rowSpan: pattern.rowSpan,
+            colSpan: pattern.colSpan
+          })
+          
+          // Mark cells as occupied
+          for (let r = currentRow; r <= endRow; r++) {
+            for (let c = currentCol; c <= endCol; c++) {
+              occupiedCells.add(`${r}-${c}`)
+            }
+          }
+        } else {
+          // Use small size if can't fit
+          layouts.push({
+            size: 'small',
+            row: currentRow,
+            col: currentCol,
+            rowSpan: 1,
+            colSpan: 1
+          })
+          occupiedCells.add(`${currentRow}-${currentCol}`)
+        }
+      }
+      
+      currentCol++
+      if (currentCol > gridSize) {
+        currentCol = 1
+        currentRow++
+      }
+    }
+    
+    return layouts
   }
 
-  const layoutConfig = getLayoutConfig(photos.length)
-
-  // Get grid position for smart placement - all photos in single collage
-  const getGridPosition = (index, config, orientation) => {
-    const { rows, cols, type } = config
-    
-    if (type === 'single') {
-      return { row: '1', col: '1' }
+  const mosaicLayout = generateMosaicLayout(photos.length)
+  const gridSize = getResponsiveGridSize(photos.length, screenSize)  // Get grid position for dynamic mosaic layout
+  const getGridPosition = (index, layout) => {
+    return {
+      row: `${layout.row} / ${layout.row + layout.rowSpan}`,
+      col: `${layout.col} / ${layout.col + layout.colSpan}`
     }
-    
-    // For all layouts, use systematic grid filling
-    const row = Math.floor(index / cols) + 1
-    const col = (index % cols) + 1
-    return { row: `${row}`, col: `${col}` }
   }
 
   const layoutStyles = {
@@ -144,26 +285,68 @@ const App = () => {
 
   return (
     <div className="app">
-      {/* Header */}
+      {/* Enhanced Header */}
       <header className="header">
+        <div className="floating-elements">
+          <div className="floating-icon">🕉️</div>
+          <div className="floating-icon">🌺</div>
+          <div className="floating-icon">🪔</div>
+        </div>
         <div className="header-content">
-          <h1 className="title">🕉️ Ganesh Chaturthi Live Collage Maker</h1>
+          <h1 className="title animated-title">🕉️ Ganesh Chaturthi Live Collage Maker</h1>
           <p className="subtitle">Create beautiful memories of Lord Ganesha's celebration</p>
+          <div className="header-credits">
+            <span className="sparkle">✨</span>
+            <p className="credits-header">🚀 Project made by <strong>Ayush Mishra</strong> and <strong>Om Dhage</strong></p>
+            <span className="sparkle">✨</span>
+          </div>
         </div>
       </header>
 
-      {/* Controls */}
+      {/* Technical Tips Section */}
+      <div className="tips-section">
+        <div className="tips-content">
+          <div className="tips-header">
+            <span className="tips-icon">›</span>
+            <h3>Optimization Guidelines</h3>
+            <span className="tips-icon">‹</span>
+          </div>
+          <div className="tips-list">
+            <div className="tip tip-primary">
+              <span className="tip-icon">▣</span>
+              <div className="tip-content">
+                <strong>Square Aspect Ratio</strong>
+                <span>1:1 ratio images optimize mosaic tessellation algorithms</span>
+              </div>
+            </div>
+            <div className="tip tip-secondary">
+              <span className="tip-icon">⟹</span>
+              <div className="tip-content">
+                <strong>Sequential Processing</strong>
+                <span>Incremental photo addition enables dynamic layout recalculation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Technical Controls */}
       <div className="controls">
+        <div className="controls-header">
+          <h3>› Image Processing Interface</h3>
+        </div>
         <div className="control-buttons">
           <button 
             className="btn btn-primary"
             onClick={() => setShowCamera(true)}
           >
-            📷 Take Photo
+            <span className="btn-icon">📷</span>
+            <span className="btn-text">Camera Capture</span>
           </button>
           
           <label className="btn btn-secondary">
-            📁 Upload Photos
+            <span className="btn-icon">📁</span>
+            <span className="btn-text">File Upload</span>
             <input
               type="file"
               multiple
@@ -179,24 +362,27 @@ const App = () => {
                 className="btn btn-success"
                 onClick={downloadCollage}
               >
-                💾 Download Collage
+                <span className="btn-icon">💾</span>
+                <span className="btn-text">Export Mosaic</span>
               </button>
               
               <button 
                 className="btn btn-danger"
                 onClick={clearAllPhotos}
               >
-                🗑️ Clear All
+                <span className="btn-icon">🗑️</span>
+                <span className="btn-text">Reset Buffer</span>
               </button>
             </>
           )}
         </div>
         
         <div className="photo-count">
-          Photos: {photos.length} | Grid: {layoutConfig.rows}×{layoutConfig.cols}
-          <span className="complexity-info">
-            {photos.length > 1 && `(${(600 / layoutConfig.rows).toFixed(0)}px per photo)`}
-          </span>
+          <span className="count-label">› Buffer: {photos.length} images</span>
+          <span className="layout-type">› Algorithm: Dynamic Mosaic</span>
+          {photos.length > 1 && (
+            <span className="complexity-info">› Status: Multi-dimensional layout active</span>
+          )}
         </div>
       </div>
 
@@ -204,25 +390,28 @@ const App = () => {
       {showCamera && (
         <div className="camera-modal">
           <div className="camera-container">
+            <h3>📸 Camera Capture Interface</h3>
             <Webcam
               ref={webcamRef}
               screenshotFormat="image/jpeg"
-              width={400}
-              height={300}
-              className="webcam"
+              width={screenSize === 'mobile' ? 280 : screenSize === 'tablet' ? 350 : 400}
+              height={screenSize === 'mobile' ? 210 : screenSize === 'tablet' ? 262 : 300}
+              className="camera-video"
             />
             <div className="camera-controls">
               <button 
                 className="btn btn-primary"
                 onClick={capturePhoto}
               >
-                📸 Capture
+                <span className="btn-icon">📸</span>
+                <span className="btn-text">Capture</span>
               </button>
               <button 
                 className="btn btn-secondary"
                 onClick={() => setShowCamera(false)}
               >
-                ❌ Cancel
+                <span className="btn-icon">❌</span>
+                <span className="btn-text">Cancel</span>
               </button>
             </div>
           </div>
@@ -235,7 +424,7 @@ const App = () => {
           <div className="empty-state">
             <div className="ganesha-icon">🐘</div>
             <h2>Welcome to Ganesh Chaturthi Collage Maker!</h2>
-            <p>Start by taking a photo or uploading images to create your beautiful collage</p>
+            <p>Start by taking a photo or uploading images to create your perfect-fit collage</p>
             <div className="ganesh-decoration">
               <span>🕉️</span>
               <span>🌺</span>
@@ -255,19 +444,22 @@ const App = () => {
             </div>
             
             <div 
-              className={`photos-grid layout-${layoutConfig.type}`}
+              ref={mosaicRef}
+              className="photos-mosaic"
               style={{
-                '--grid-rows': layoutConfig.rows,
-                '--grid-cols': layoutConfig.cols,
+                '--grid-size': gridSize,
                 position: 'relative'
               }}
             >
               {photos.map((photo, index) => {
-                const gridPosition = getGridPosition(index, layoutConfig, photo.orientation)
+                const layout = mosaicLayout[index]
+                if (!layout) return null
+                
+                const gridPosition = getGridPosition(index, layout)
                 return (
                   <div 
                     key={photo.id} 
-                    className={`photo-item ${photo.orientation}`}
+                    className={`photo-item ${photo.orientation} size-${layout.size}`}
                     style={{
                       gridRow: gridPosition.row,
                       gridColumn: gridPosition.col
@@ -289,8 +481,8 @@ const App = () => {
                     >
                       ❌
                     </button>
-                    <div className="photo-timestamp">
-                      #{index + 1}
+                    <div className="size-indicator">
+                      {layout.size}
                     </div>
                   </div>
                 )
@@ -300,6 +492,7 @@ const App = () => {
             <div className="collage-footer">
               <div className="decorative-border"></div>
               <p>✨ Ganesh Chaturthi {new Date().getFullYear()} ✨</p>
+              <p className="perfect-fit-indicator">Dynamic Mosaic: {photos.length} photos in artistic layout!</p>
               <div className="footer-decoration">
                 <span>🌺</span>
                 <span>🪔</span>
