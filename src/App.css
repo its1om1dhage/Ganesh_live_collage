@@ -1,0 +1,804 @@
+/* Ganesh Chaturthi Live Collage Maker Styles */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #ff6b35, #f7931e, #ffd23f);
+  min-height: 100vh;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Styles */
+.header {
+  background: linear-gradient(45deg, #ff4500, #ff6347);
+  color: white;
+  padding: 2rem 1rem;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border-bottom: 4px solid #ffd700;
+}
+
+.header-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: glow 2s infinite alternate;
+}
+
+.header-content p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+@keyframes glow {
+  from { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 215, 0, 0.5); }
+  to { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 215, 0, 0.8); }
+}
+
+/* Controls */
+.controls {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-bottom: 2px solid #ffd700;
+}
+
+.control-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, #ff6b35, #ff4500);
+  color: white;
+}
+
+.btn-secondary {
+  background: linear-gradient(45deg, #4a90e2, #357abd);
+  color: white;
+}
+
+.btn-success {
+  background: linear-gradient(45deg, #28a745, #20c997);
+  color: white;
+}
+
+.btn-danger {
+  background: linear-gradient(45deg, #dc3545, #c82333);
+  color: white;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.layout-select {
+  padding: 0.75rem 1rem;
+  border: 2px solid #ff6b35;
+  border-radius: 25px;
+  font-size: 1rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.layout-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.3);
+}
+
+.photo-count {
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  text-align: center;
+}
+
+.capacity-info {
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: normal;
+}
+
+.overflow-info {
+  font-size: 0.8rem;
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.complexity-info {
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: normal;
+}
+
+/* Camera Modal */
+.camera-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.camera-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.webcam {
+  border-radius: 15px;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.camera-controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  margin: 2rem auto;
+  max-width: 600px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.ganesha-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+.empty-state h2 {
+  color: #ff4500;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+.ganesh-decoration {
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  animation: sparkle 3s infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Collage Styles */
+.collage-container {
+  background: linear-gradient(145deg, #fff, #f8f9fa);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: 3px solid #ffd700;
+  margin: 0 auto;
+  max-width: 800px;
+  width: 100%;
+}
+
+.collage-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.collage-header h2 {
+  color: #ff4500;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.decorative-border {
+  height: 4px;
+  background: linear-gradient(90deg, #ff6b35, #ffd700, #ff6b35);
+  border-radius: 2px;
+  margin: 1rem auto;
+  width: 200px;
+}
+
+/* Fixed Size Photo Grid Layouts - Photos get smaller as grid gets more complex */
+.photos-grid {
+  display: grid;
+  gap: 4px; /* Smaller gap for higher density */
+  margin: 2rem auto;
+  width: 600px;
+  height: 600px;
+  background: #f8f9fa;
+  border: 2px solid #ffd700;
+  border-radius: 15px;
+  padding: 8px;
+}
+
+/* Grid gets denser as photos increase */
+.layout-single {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  gap: 15px;
+}
+
+.layout-grid {
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  grid-template-rows: repeat(var(--grid-rows), 1fr);
+  gap: 8px;
+}
+
+.layout-complex {
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  grid-template-rows: repeat(var(--grid-rows), 1fr);
+  gap: 6px;
+}
+
+.layout-ultra {
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  grid-template-rows: repeat(var(--grid-rows), 1fr);
+  gap: 5px;
+}
+
+.layout-mega {
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  grid-template-rows: repeat(var(--grid-rows), 1fr);
+  gap: 4px;
+}
+
+.layout-extreme {
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  grid-template-rows: repeat(var(--grid-rows), 1fr);
+  gap: 3px;
+}
+
+.layout-insane {
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  grid-template-rows: repeat(var(--grid-rows), 1fr);
+  gap: 2px;
+}
+
+.layout-infinite {
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  grid-template-rows: repeat(var(--grid-rows), 1fr);
+  gap: 1px; /* Minimal gap for maximum density */
+}
+
+/* Photo Items with Smart Scaling Based on Grid Density */
+.photo-item {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  background: white;
+  border: 1px solid #ffd700;
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hover effects scale down as grid becomes denser */
+.layout-single .photo-item:hover,
+.layout-grid .photo-item:hover,
+.layout-complex .photo-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  z-index: 10;
+}
+
+.layout-ultra .photo-item:hover,
+.layout-mega .photo-item:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.layout-extreme .photo-item:hover,
+.layout-insane .photo-item:hover,
+.layout-infinite .photo-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+/* Border thickness decreases as density increases */
+.layout-single .photo-item {
+  border: 3px solid #ffd700;
+  border-radius: 12px;
+}
+
+.layout-grid .photo-item {
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+}
+
+.layout-complex .photo-item,
+.layout-ultra .photo-item {
+  border: 2px solid #ffd700;
+  border-radius: 8px;
+}
+
+.layout-mega .photo-item,
+.layout-extreme .photo-item {
+  border: 1px solid #ffd700;
+  border-radius: 6px;
+}
+
+.layout-insane .photo-item,
+.layout-infinite .photo-item {
+  border: 1px solid #ffd700;
+  border-radius: 4px;
+}
+
+/* Different styling based on image orientation */
+.photo-item.landscape {
+  background: linear-gradient(45deg, #fff3e0, #fff8e1);
+}
+
+.photo-item.portrait {
+  background: linear-gradient(45deg, #e8f5e8, #f1f8e9);
+}
+
+.photo-item.square {
+  background: linear-gradient(45deg, #e3f2fd, #e8eaf6);
+}
+
+.photo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+/* Smart object positioning based on aspect ratio */
+.photo-item.landscape .photo-image {
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+  height: 100%;
+}
+
+.photo-item.portrait .photo-image {
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+  height: 100%;
+}
+
+.photo-item.square .photo-image {
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+  height: 100%;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(220, 53, 69, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.6rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Remove button gets smaller for high-density grids */
+.layout-insane .remove-btn,
+.layout-infinite .remove-btn {
+  width: 16px;
+  height: 16px;
+  font-size: 0.5rem;
+  top: 1px;
+  right: 1px;
+}
+
+.photo-item:hover .remove-btn {
+  opacity: 1;
+}
+
+.photo-timestamp {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.2rem;
+  font-size: 0.7rem;
+  text-align: center;
+  border-radius: 0 0 6px 6px;
+}
+
+/* Timestamp gets smaller for high-density grids */
+.layout-mega .photo-timestamp,
+.layout-extreme .photo-timestamp {
+  font-size: 0.6rem;
+  padding: 0.1rem;
+}
+
+.layout-insane .photo-timestamp,
+.layout-infinite .photo-timestamp {
+  font-size: 0.5rem;
+  padding: 0.1rem;
+  border-radius: 0 0 3px 3px;
+}
+
+/* Progressive complexity indicators */
+.photos-grid::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: linear-gradient(45deg, #ff6b35, #ffd700, #ff6b35, #ffd700);
+  background-size: 400% 400%;
+  border-radius: 20px;
+  z-index: -1;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Complexity level indicators */
+.layout-single::after {
+  content: "Simple Layout (1×1)";
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #28a745;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.layout-grid::after {
+  content: "Grid Layout";
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffc107;
+  color: #333;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.layout-complex::after {
+  content: "Complex Collage";
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #dc3545;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.layout-ultra::after {
+  content: "Ultra Complex";
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #6f42c1;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  animation: pulse 1.5s infinite;
+}
+
+.layout-mega::after {
+  content: "MEGA Collage";
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(45deg, #e83e8c, #fd7e14);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  animation: glow 2s infinite alternate;
+}
+
+.layout-extreme::after {
+  content: "EXTREME Mode";
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(45deg, #dc3545, #fd7e14, #ffc107);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  animation: rainbow 3s infinite;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.layout-insane::after {
+  content: "INSANE COMPLEXITY";
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(45deg, #ff0000, #ff4500, #ffd700, #00ff00, #00bfff, #8a2be2);
+  background-size: 300% 300%;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  animation: rainbow 1s infinite, shake 0.5s infinite;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 1);
+  border: 2px solid #fff;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+}
+
+.layout-infinite::after {
+  content: "♾️ INFINITE POWER ♾️";
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(45deg, #000, #333, #666, #999, #fff);
+  background-size: 400% 400%;
+  color: #ffd700;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  animation: infiniteGlow 2s infinite, float 3s infinite;
+  text-shadow: 0 0 20px #ffd700;
+  border: 3px solid #ffd700;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), inset 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  25% { transform: translateX(-50%) rotate(1deg); }
+  75% { transform: translateX(-50%) rotate(-1deg); }
+}
+
+@keyframes infiniteGlow {
+  0%, 100% { 
+    background-position: 0% 50%;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), inset 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+  50% { 
+    background-position: 100% 50%;
+    box-shadow: 0 0 50px rgba(255, 215, 0, 1), inset 0 0 30px rgba(255, 215, 0, 0.5);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateX(-50%) translateY(0px); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+/* Collage Footer */
+.collage-footer {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.collage-footer p {
+  color: #ff4500;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.footer-decoration {
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* App Footer */
+.footer {
+  background: linear-gradient(45deg, #333, #555);
+  color: white;
+  text-align: center;
+  padding: 1.5rem;
+  margin-top: auto;
+}
+
+.footer-icons {
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-content h1 {
+    font-size: 1.8rem;
+  }
+  
+  .controls {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .control-buttons {
+    justify-content: center;
+  }
+  
+  .collage-container {
+    padding: 1rem;
+    margin: 1rem;
+    max-width: 100%;
+  }
+  
+  .photos-grid {
+    width: 100%;
+    height: 400px;
+    max-width: 400px;
+  }
+  
+  .camera-container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+  
+  .webcam {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .collage-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .photos-grid {
+    width: 100%;
+    height: 300px;
+    max-width: 300px;
+  }
+  
+  .photo-timestamp {
+    font-size: 0.6rem;
+    padding: 0.1rem;
+  }
+  
+  .remove-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 0.6rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .controls,
+  .header,
+  .footer,
+  .remove-btn {
+    display: none !important;
+  }
+  
+  .collage-container {
+    box-shadow: none;
+    border: 2px solid #000;
+    margin: 0;
+    padding: 1rem;
+  }
+}
