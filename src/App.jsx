@@ -226,12 +226,8 @@ const App = () => {
           </div>
 
           {/* Inner Ring */}
-          <div className="mandala-ring inner-ring">
-            <div className="symbol symbol-1">🪔</div>
-            <div className="symbol symbol-2">🌺</div>
-            <div className="symbol symbol-3">🕉️</div>
-            <div className="symbol symbol-4">🔱</div>
-          </div>
+          {/* <div className="mandala-ring inner-ring">
+          </div> */}
 
           {/* Center */}
           <div className="center-ganesh">
