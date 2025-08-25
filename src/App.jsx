@@ -1,13 +1,23 @@
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import html2canvas from 'html2canvas'
 import './App.css'
 
 const App = () => {
   const [photos, setPhotos] = useState([])
   const [showCamera, setShowCamera] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const fileInputRef = useRef(null)
   const collageRef = useRef(null)
   const videoRef = useRef(null)
+
+  // Simulate loading time for the website
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 3000) // 3 seconds loading time
+
+    return () => clearTimeout(timer)
+  }, [])
 
   // Add photo to collage
   const addPhoto = useCallback((src) => {
@@ -196,6 +206,56 @@ const App = () => {
     }
   }
 
+  // Enhanced Ganesh Loader with Beautiful Stars
+  const AncientGaneshLoader = () => (
+    <div className="ancient-loader">
+      <div className="cosmic-background">
+        <div className="stars"></div>
+        <div className="stars2"></div>
+        <div className="stars3"></div>
+      </div>
+      
+      <div className="loader-container">
+        <div className="ganesh-mandala">
+          {/* Outer Ring */}
+          <div className="mandala-ring outer-ring">
+            <div className="sanskrit-text text-1">ॐ</div>
+            <div className="sanskrit-text text-2">गं</div>
+            <div className="sanskrit-text text-3">श्री</div>
+            <div className="sanskrit-text text-4">गणपति</div>
+          </div>
+
+          {/* Inner Ring */}
+          <div className="mandala-ring inner-ring">
+            <div className="symbol symbol-1">🪔</div>
+            <div className="symbol symbol-2">🌺</div>
+            <div className="symbol symbol-3">🕉️</div>
+            <div className="symbol symbol-4">🔱</div>
+          </div>
+
+          {/* Center */}
+          <div className="center-ganesh">
+            <div className="ganesh-icon">🐘</div>
+            <div className="loading-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="loader-text">
+          <h2>श्री गणेश चतुर्थी</h2>
+          <p>Creating Divine Memories...</p>
+        </div>
+      </div>
+    </div>
+  )
+
+  if (isLoading) {
+    return <AncientGaneshLoader />
+  }
+
   return (
     <div className="app">
       {/* Animated Background */}
@@ -203,9 +263,13 @@ const App = () => {
         <div className="floating-element ganesh-om">ॐ</div>
         <div className="floating-element ganesh-om">गं</div>
         <div className="floating-element ganesh-om">श्री</div>
+        <div className="floating-element ganesh-om">गणपति</div>
         <div className="floating-element ganesh-symbol">🪔</div>
         <div className="floating-element ganesh-symbol">🌺</div>
         <div className="floating-element ganesh-symbol">🕉️</div>
+        <div className="floating-element ganesh-symbol">🎊</div>
+        <div className="floating-element ganesh-symbol">✨</div>
+        <div className="floating-element ganesh-om">बप्पा</div>
       </div>
 
       {/* Header */}
@@ -320,6 +384,9 @@ const App = () => {
       {/* Footer */}
       <footer className="footer">
         <p>Ganpati Bappa Morya! 🙏</p>
+        <div className="credits">
+          <p>Created by <span className="creator-name">Ayush Mishra</span> & <span className="creator-name">Om Dhage</span></p>
+        </div>
       </footer>
     </div>
   )
